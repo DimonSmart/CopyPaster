@@ -52,33 +52,6 @@ namespace KeyStrokeSender
             public int y;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct INPUT
-        {
-            public uint type;
-            public InputUnion u;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        public struct InputUnion
-        {
-            [FieldOffset(0)]
-            public KEYBDINPUT ki;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct KEYBDINPUT
-        {
-            public ushort wVk;
-            public ushort wScan;
-            public uint dwFlags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
-
-        const uint INPUT_KEYBOARD = 1;
-        const uint KEYEVENTF_KEYUP = 0x0002;
-
         static void Main(string[] args)
         {
             // Register the hotkey (Ctrl+Shift+Insert)
@@ -116,12 +89,22 @@ namespace KeyStrokeSender
             if (!string.IsNullOrEmpty(clipboardText))
             {
                 var simulator = new InputSimulator();
+       
+
+                // simulator.Keyboard.TextEntry(clipboardText);
+                // return;
 
                 // Send the text as keystrokes
                 foreach (char c in clipboardText)
                 {
                     // Simulate the key press
-                    simulator.Keyboard.TextEntry(c);
+                    if (c == 13)
+                        simulator.Keyboard.KeyDown( VirtualKeyCode.RETURN);
+                    else
+                        simulator.Keyboard.TextEntry(c);
+                    
+                    
+                    simulator.Keyboard.Sleep(100);
                 }
             }
         }
